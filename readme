@@ -1,0 +1,15 @@
+Event Driven OTP Authentication System
+
+Tech:
+Spring Boot
+Kafka
+Redis
+Docker
+API Gateway
+
+Run:
+docker compose up
+
+APIs:
+POST /otp/send
+POST /otp/verify
