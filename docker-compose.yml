@@ -1,5 +1,11 @@
 services:
 
+  eureka:
+    build: ./eureka-server
+    container_name: eureka
+    ports:
+      - "8761:8761"
+
   mysql:
     image: mysql:8.4
     container_name: mysql
@@ -51,8 +57,11 @@ services:
       SPRING_DATASOURCE_PASSWORD: Root@1234
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
       SPRING_DATA_REDIS_HOST: redis
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka:8761/eureka
     # Scaling will be handled via --scale flag (docker compose does not support deploy.replicas)
     depends_on:
+      eureka:
+        condition: service_started
       mysql:
         condition: service_healthy
       redis:
@@ -85,8 +94,10 @@ services:
     build: ./gateway-service
     environment:
       SPRING_PROFILES_ACTIVE: docker
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka:8761/eureka
     container_name: gateway
     depends_on:
       - auth
+      - eureka
     ports:
       - "8080:8080"
